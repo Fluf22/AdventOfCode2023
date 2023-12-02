@@ -1,5 +1,5 @@
 //
-//  main.swift
+//  ex2.swift
 //  AdventOfCode
 //
 //  Created by Thomas Raffray on 01/12/2023.

@@ -10,9 +10,13 @@ import Foundation
 func retrieveCalibration(from line: String, calibrator: (String) -> String) throws -> Int {
     let calibrationString = calibrator(line)
     
-    let firstLetter = calibrationString.first ?? "0"
+    guard let firstLetter = calibrationString.first else {
+        fatalError("Unable to find first letter")
+    }
     
-    let lastLetter = calibrationString.last ?? "0"
+    guard let lastLetter = calibrationString.last else {
+        fatalError("Unable to find last letter")
+    }
 
     guard let calibration = Int(String(firstLetter) + String(lastLetter)) else {
         fatalError("Unable to get calibration.")
