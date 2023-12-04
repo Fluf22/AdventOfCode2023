@@ -8,48 +8,49 @@
 import Foundation
 import os
 
-let authorizedNumberStrings: Dictionary<String, Dictionary<String, String>> = [
+let authorizedNumberStrings: Dictionary<String, Dictionary<String, (String, String)>> = [
 "o": [
-    "n": "1"
+    "n": ("one", "1")
     ],
 "t": [
-    "w": "2",
-    "h": "3"
+    "w": ("two", "2"),
+    "h": ("three", "3")
     ],
 "f": [
-    "o": "4",
-    "i": "5"
+    "o": ("four", "4"),
+    "i": ("five", "5")
     ],
 "s": [
-    "i": "6",
-    "e": "7"
+    "i": ("six", "6"),
+    "e": ("seven", "7")
     ],
 "e": [
-    "i": "8"
+    "i": ("eight", "8")
     ],
 "n": [
-    "i": "9"
+    "i": ("nine", "9")
     ],
 ]
 
 let numberStrCount: Dictionary<String, Int> = [
-"1": 2,
-"2": 2,
-"3": 4,
-"4": 3,
-"5": 3,
-"6": 2,
-"7": 4,
-"8": 4,
-"9": 3,
+"1": 3,
+"2": 3,
+"3": 5,
+"4": 4,
+"5": 4,
+"6": 3,
+"7": 5,
+"8": 5,
+"9": 4,
 ]
 
-private func craftCalibrationString2(from line: String) -> String {
+private func craftCalibrationString(from line: String) -> String {
     var calibrationString = ""
     var idx = -1
     while (idx < line.count - 1) {
         idx += 1
-        let char = line[line.index(line.startIndex, offsetBy: idx)]
+        let firstCharIndex = line.index(line.startIndex, offsetBy: idx)
+        let char = line[firstCharIndex]
         let firstLevel = String(char)
         if char.isNumber {
             calibrationString += firstLevel
@@ -57,36 +58,24 @@ private func craftCalibrationString2(from line: String) -> String {
         }
         
         if authorizedNumberStrings.keys.contains(where: {$0 == firstLevel}) {
-            if let secondDict: Dictionary<String, String> = authorizedNumberStrings[firstLevel], idx < line.count - 1 {
+            if let secondDict: Dictionary<String, (String, String)> = authorizedNumberStrings[firstLevel], idx < line.count - 1 {
                 let secondLevel = String(line[line.index(line.startIndex, offsetBy: idx + 1)])
-                if secondDict.keys.contains(where: {$0 == secondLevel}), let numberChar = secondDict[secondLevel] {
-                    calibrationString += numberChar
-                    idx += numberStrCount[numberChar]!
-                    continue
-                }
-            }
-        }
-        
-        continue
-    }
-    
-    return calibrationString
-}
+                if secondDict.keys.contains(where: {$0 == secondLevel}), let (numberStr, numberChar) = secondDict[secondLevel] {
+                    guard let charCountInNumberWord = numberStrCount[numberChar] else {
+                        fatalError("number word not found")
+                    }
 
-private func craftCalibrationString(from line: String) -> String {
-    var calibrationString = ""
-    for (idx, char) in line.enumerated() {
-        let firstLevel = String(char)
-        if char.isNumber {
-            calibrationString += firstLevel
-            continue
-        }
-        
-        if authorizedNumberStrings.keys.contains(where: {$0 == firstLevel}) {
-            if let secondDict: Dictionary<String, String> = authorizedNumberStrings[firstLevel], idx < line.count - 1 {
-                let secondLevel = String(line[line.index(line.startIndex, offsetBy: idx + 1)])
-                if secondDict.keys.contains(where: {$0 == secondLevel}), let numberChar = secondDict[secondLevel] {
-                    calibrationString += numberChar
+                    let endIndex = idx + charCountInNumberWord
+                    if endIndex > line.count {
+                        continue
+                    }
+                    
+                    let numberWord = line[firstCharIndex..<String.Index(utf16Offset: endIndex, in: line)]
+                    let isNumberWordComplete = numberWord == numberStr
+                    if isNumberWordComplete {
+                        calibrationString += numberChar
+                    }
+                    
                     continue
                 }
             }

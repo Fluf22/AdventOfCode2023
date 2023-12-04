@@ -11,7 +11,7 @@ let day = "1"
 let ex = "2"
 let input = "2"
 
-let fileName = "/Users/thomasr.affray/Documents/Private/AdventOfCode/AdventOfCode/Day \(day)/Ex \(ex)/input\(input)"
+let fileName = "/Users/thomasr.affray/Documents/Private/AdventOfCode2023/AdventOfCode/Day \(day)/Ex \(ex)/input\(input)"
 
 func readFile(_ name: String) throws -> String {
     let document = URL(fileURLWithPath: name)
